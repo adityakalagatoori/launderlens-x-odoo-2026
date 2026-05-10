@@ -122,5 +122,39 @@ Project Structure :-
 
 How to Run Locally :-
 
+Commands to Run on Any Device
+Step 1 — Clone the repo
+bash
+git clone https://github.com/adityakalagatoori/launderlens-x-odoo-2026.git
+cd launderlens-x-odoo-2026
+Step 2 — Setup Backend
+bash
+cd backend
+npm install
+Create your .env file (copy from example):
+
+bash
+copy .env.example .env
+Then open .env and fill in your Gmail, Google OAuth keys, etc.
+
+bash
+npx prisma generate
+npx prisma db push
+npm run dev
+Backend runs at http://localhost:5000
+
+Step 3 — Setup Frontend (new terminal)
+bash
+cd frontend
+npm install
+npm run dev
+Frontend runs at http://localhost:3000
+
+Quick Reference (both running)
+Terminal 1	Terminal 2
+cd backend → npm run dev	cd frontend → npm run dev
+Runs on port 5000	Runs on port 3000
+Open browser → http://localhost:3000 
+
 Screenshots :-
 
