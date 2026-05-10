@@ -157,4 +157,20 @@ Runs on port 5000	Runs on port 3000
 Open browser → http://localhost:3000 
 
 Screenshots :-
+login page :-
+<img width="1916" height="940" alt="image" src="https://github.com/user-attachments/assets/5d1fdf8a-cb38-4a7f-a54d-e53d279f5cb2" />
+user dashboard page :-
+<img width="1919" height="943" alt="image" src="https://github.com/user-attachments/assets/93a0d105-9fa4-4801-8e5a-2ecaa80d4886" />
+home page :-
+<img width="1918" height="990" alt="image" src="https://github.com/user-attachments/assets/76741d4e-914d-4a1e-ab6f-9e0e642b3894" />
+new trip :-
+<img width="1917" height="989" alt="image" src="https://github.com/user-attachments/assets/c3ff8241-212c-49b8-917c-6d05e08b53ce" />
+<img width="1916" height="994" alt="image" src="https://github.com/user-attachments/assets/12b2263f-3f5a-4dcc-a316-bbed81f54dae" />
+
+
+
+
+
+
+
 
