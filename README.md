@@ -25,12 +25,13 @@ The application must demonstrate proper use of relational databases to store and
 TRAVELOOP
 
 Main pages:
-[built for tourist side and tourist guide side]
+[built for tourist side]
 	1. Login, Registration & main page
 	2. Create new trip, build itenary, search by activity, budget section, packing & trip notes.
-	3.  user trip listing & user profile
+	3. user trip listing & user profile
 	4. Community review & connect page
-  5. Admin panel 
+    5. Admin panel 
+
 
 Tech Stack :-
 
