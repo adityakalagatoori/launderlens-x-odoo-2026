@@ -115,6 +115,7 @@ Features :-
 
 
 Live Demo :-
+https://drive.google.com/file/d/1gT_TUJCxlY0pfS0lHrYXmXyuGA9Fvxb9/view?usp=sharing
 
 Project Structure :-
 <img width="890" height="490" alt="WhatsApp Image 2026-05-10 at 16 42 37" src="https://github.com/user-attachments/assets/bb01cc45-33c7-4931-81a4-d686d9b5db1f" />
@@ -122,39 +123,67 @@ Project Structure :-
 
 How to Run Locally :-
 
-Commands to Run on Any Device
-Step 1 — Clone the repo
+🚀 Traveloop: Local Setup Guide
+1. Prerequisites
+Node.js: v18+ (Works on both 64-bit and 32-bit systems)
+Git: For cloning and updates
+2. Initial Setup
 bash
+# Clone the repository
 git clone https://github.com/adityakalagatoori/launderlens-x-odoo-2026.git
 cd launderlens-x-odoo-2026
-Step 2 — Setup Backend
-bash
+# Install Backend Dependencies
 cd backend
 npm install
-Create your .env file (copy from example):
+# Install Frontend Dependencies
+cd ../frontend
+npm install
+3. Environment Configuration
+Create a .env file in the /backend directory (you can copy from .env.example).
 
-bash
-copy .env.example .env
-Then open .env and fill in your Gmail, Google OAuth keys, etc.
+Essential Keys:
 
-bash
+env
+# Database & Auth
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="your_secret_key"
+# Email (Gmail App Password)
+SMTP_USER="kalagatooriaditya@gmail.com"
+SMTP_PASS="yxusgnmfxiqcxvxf" # This is your current active app password
+# Google OAuth
+GOOGLE_CLIENT_ID="467681754269-8b57rpqu20nlcrfokn7lmvtunet0qdsl.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="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"
+4. Database & 32-Bit Fixes
+If you are on a 32-bit Windows system, run these specific commands in the /backend folder to ensure Prisma works correctly:
+
+powershell
+# Set 32-bit compatibility
+$env:PRISMA_CLIENT_ENGINE_TYPE="binary"
+$env:PRISMA_CLI_QUERY_ENGINE_TYPE="binary"
+# Generate Client & Sync Database
 npx prisma generate
 npx prisma db push
-npm run dev
-Backend runs at http://localhost:5000
+5. Launch the Application
+You need two separate terminal windows:
 
-Step 3 — Setup Frontend (new terminal)
+Terminal 1 (Backend):
+
+bash
+cd backend
+npm run dev
+# Running on http://localhost:5000
+Terminal 2 (Frontend):
+
 bash
 cd frontend
-npm install
 npm run dev
-Frontend runs at http://localhost:3000
-
-Quick Reference (both running)
-Terminal 1	Terminal 2
-cd backend → npm run dev	cd frontend → npm run dev
-Runs on port 5000	Runs on port 3000
-Open browser → http://localhost:3000 
+# Running on http://localhost:3000
+6. Access & Credentials
+User Portal: http://localhost:3000
+Admin Dashboard: http://localhost:3000/admin/login
+User: admin@traveloop.com
+Pass: admin@2026
+Guide Portal: http://localhost:3000/guide/login
 
 Screenshots :-
 LOGIN PAGE :-
