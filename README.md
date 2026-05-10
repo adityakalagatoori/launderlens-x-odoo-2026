@@ -5,8 +5,7 @@
 KALAGATOORI VAISHNAV ADITYA | Backend & Database
 SRUSHTI DAKSHINAMOORTHY | Research, Planning & Documentation
 BALACHANDAR A | Developer
-SHYAAM GANESH M.R UI/UX AND FRONTEND DEVELOPER
-
+SHYAAM GANESH M.R | UI/UX & Frontend
 
 
 **Problem Statement :-**
