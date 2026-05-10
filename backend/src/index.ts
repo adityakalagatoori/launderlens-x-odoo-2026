@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes';
 import cityRoutes from './routes/city.routes';
 import activityRoutes from './routes/activity.routes';
 import tripRoutes from './routes/trip.routes';
+import adminRoutes from './routes/admin.routes';
 import { errorHandler } from './middleware/error.middleware';
 
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/cities', cityRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {
