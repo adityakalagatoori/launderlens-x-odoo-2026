@@ -38,17 +38,38 @@ model User {
   // Session management
   refreshToken  String?   @unique
   
+  // Email verification
+  isEmailVerified Boolean @default(false)
+  verificationToken String? @unique
+
+  // Profile & buddy matching preferences
+  age             Int?
+  gender          String?
+  tripVibe        String?
+  buddyPrefGender String?
+  buddyPrefAgeMin Int?
+  buddyPrefAgeMax Int?
+  preferredBudget String?
+  preferredRegions String?  // JSON array of preferred regions
+  dietaryRestrictions String? // JSON array
+  travelPace      String?    // e.g. "Slow", "Moderate", "Fast"
+  activityTags    String?    // JSON array
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   trips         Trip[]
   companions    TripCompanion[]
   wishlisted    Wishlist[]
+  cityWishlists CityWishlist[]
   expenses      Expense[]
   notes         Note[]
   reviews       Review[]
   followers     Follow[]  @relation("following")
   following     Follow[]  @relation("follower")
+  communityPosts CommunityPost[]
+  communityComments CommunityComment[]
+  guideBookings GuideTripBooking[]
 
   @@index([email, phone])
 }
@@ -78,6 +99,10 @@ model Trip {
   visibility  String   @default("PRIVATE")
   tags        String   @default("[]")
   
+  // Solo/Group & buddy matching
+  tripMode        String  @default("solo")
+  lookingForBuddy Boolean @default(false)
+  
   ownerId     String
   owner       User     @relation(fields: [ownerId], references: [id])
   
@@ -88,6 +113,8 @@ model Trip {
   packingLists  PackingList[]
   notes         Note[]
   carbonEmissions CarbonEmission[]
+  albumPhotos   TripAlbumPhoto[]
+  guideBookings GuideTripBooking[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -126,8 +153,28 @@ model City {
   activities      Activity[]
   stops           ItineraryStop[]
   safetyAlerts    SafetyAlert[]
+  cityWishlists   CityWishlist[]
+  guides          TouristGuide[]
+  
+  // New discovery fields
+  seasonalAlerts  String?   // JSON object with weather/traffic info
+  hiddenGems      String?   // JSON array of points {name, lat, lng, description}
+  bestTimeInfo    String?   // Detailed text
+  highTrafficMonths String? // JSON array
   
   createdAt       DateTime @default(now())
+}
+
+// ── CITY WISHLIST ──
+model CityWishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  cityId    String
+  city      City     @relation(fields: [cityId], references: [id])
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, cityId])
 }
 
 // ── ACTIVITY DOMAIN ──
@@ -258,6 +305,20 @@ model Note {
   updatedAt DateTime @updatedAt
 }
 
+// ── TRIP ALBUM DOMAIN ──
+model TripAlbumPhoto {
+  id         String   @id @default(cuid())
+  tripId     String
+  trip       Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  mediaUrl   String
+  mediaType  String   @default("photo")
+  caption    String?
+  timestamp  DateTime @default(now())
+  isCover    Boolean  @default(false)
+  
+  createdAt  DateTime @default(now())
+}
+
 // ── SAFETY DOMAIN ──
 model SafetyAlert {
   id        String   @id @default(cuid())
@@ -282,6 +343,44 @@ model CarbonEmission {
   createdAt DateTime @default(now())
 }
 
+// ── TOURIST GUIDE DOMAIN ──
+model TouristGuide {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  cityId       String
+  city         City     @relation(fields: [cityId], references: [id])
+  languages    String   @default("[]")
+  ratePerDay   Float    @default(0)
+  experience   Int      @default(0)
+  bio          String?
+  avatar       String?
+  rating       Float    @default(5.0)
+  specialties  String?
+  isVerified   Boolean  @default(false)
+  
+  bookings     GuideTripBooking[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model GuideTripBooking {
+  id        String       @id @default(cuid())
+  tripId    String
+  trip      Trip         @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  guideId   String
+  guide     TouristGuide @relation(fields: [guideId], references: [id])
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  status    String       @default("PENDING")
+  message   String?
+  
+  createdAt DateTime     @default(now())
+}
+
 // ── COMMUNITY DOMAIN ──
 model Review {
   id        String   @id @default(cuid())
@@ -293,4 +392,31 @@ model Review {
   body      String
   
   createdAt DateTime @default(now())
+}
+
+model CommunityPost {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   @default("text")
+  title     String
+  body      String?
+  mediaUrl  String?
+  likes     Int      @default(0)
+  
+  comments  CommunityComment[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CommunityComment {
+  id        String        @id @default(cuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  body      String
+  
+  createdAt DateTime      @default(now())
 }

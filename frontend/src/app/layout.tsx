@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
@@ -25,7 +27,11 @@ export default function RootLayout({
           <div className="absolute top-[40%] left-[60%] w-[30vw] h-[30vw] rounded-full bg-[#AEE7EC]/20 blur-[100px] mix-blend-overlay animate-pulse-slow" />
         </div>
         
-        {children}
+        <Navbar />
+        <Sidebar />
+        <main className="lg:pl-44 transition-all duration-500">
+          {children}
+        </main>
       </body>
     </html>
   );

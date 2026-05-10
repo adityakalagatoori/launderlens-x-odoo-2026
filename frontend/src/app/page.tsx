@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Compass, Map, Search, Plus, Calendar, Plane, ArrowRight, LogOut, Package, ShieldCheck, Trash2 } from 'lucide-react';
+import { Home, Compass, Map, Search, Plus, Calendar, Plane, ArrowRight, LogOut, Package, ShieldCheck, Trash2, Heart, MessageCircle, LayoutDashboard } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { tripsAPI, citiesAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
@@ -59,10 +59,12 @@ export default function Dashboard() {
         <nav className="flex-1 flex flex-col gap-4 w-full px-4">
           {[
             { icon: <Home size={22} />, href: '/', active: true, label: 'Home' },
+            { icon: <LayoutDashboard size={22} />, href: '/dashboard', active: false, label: 'Dashboard' },
             { icon: <Map size={22} />, href: '/cities', active: false, label: 'Cities' },
             { icon: <Compass size={22} />, href: '/activities', active: false, label: 'Explore' },
+            { icon: <MessageCircle size={22} />, href: '/community', active: false, label: 'Community' },
+            { icon: <Heart size={22} />, href: '/dashboard', active: false, label: 'Wishlist' },
             { icon: <Package size={22} />, href: '/trips/new', active: false, label: 'New Trip' },
-            { icon: <ShieldCheck size={22} />, href: '/admin', active: false, label: 'Admin' },
           ].map((item, i) => (
             <Link key={i} href={item.href} title={item.label} className={`w-full aspect-square rounded-2xl flex items-center justify-center transition-all ${item.active ? 'bg-white shadow-md text-[#63D5DF]' : 'text-[#1A1A1A]/50 hover:bg-white/40'}`}>
               {item.icon}

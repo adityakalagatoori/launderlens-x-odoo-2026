@@ -12,8 +12,11 @@ yarn-error.log*
 .env
 .env.local
 
-# Git
+# Database
+*.db
+*.db-journal
+
+# Build output
 .git/
 .next/
 .turbo/
-

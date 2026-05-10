@@ -6,7 +6,19 @@ export const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 10000, // 10s timeout - prevents hanging requests
 });
+
+// Auto-retry on network error once
+api.interceptors.response.use(
+  (res) => res,
+  async (err) => {
+    if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+      console.warn('[Traveloop] Request timed out:', err.config?.url);
+    }
+    return Promise.reject(err);
+  }
+);
 
 // Attach token to every request
 api.interceptors.request.use((config) => {
@@ -60,6 +72,11 @@ export const tripsAPI = {
   // Carbon
   getCarbon: (tripId: string) => api.get(`/trips/${tripId}/carbon`),
   addCarbon: (tripId: string, data: any) => api.post(`/trips/${tripId}/carbon`, data),
+  // Album
+  getAlbum: (tripId: string) => api.get(`/trips/${tripId}/album`),
+  addAlbumPhoto: (tripId: string, data: any) => api.post(`/trips/${tripId}/album`, data),
+  deleteAlbumPhoto: (tripId: string, photoId: string) => api.delete(`/trips/${tripId}/album/${photoId}`),
+  setAlbumCover: (tripId: string, photoId: string) => api.patch(`/trips/${tripId}/album/${photoId}/cover`),
 };
 
 export const citiesAPI = {
@@ -75,6 +92,51 @@ export const activitiesAPI = {
   search: (params?: any) => api.get('/activities', { params }),
   getActivity: (id: string) => api.get(`/activities/${id}`),
   getDetour: (cityId?: string, budget?: number) => api.get('/activities/detour-roulette', { params: { cityId, budget } }),
+};
+
+export const guidesAPI = {
+  getAll: () => api.get('/guides'),
+  getByCity: (cityId: string) => api.get(`/guides/city/${cityId}`),
+  book: (data: any) => api.post('/guides/book', data),
+  getBookings: (tripId: string) => api.get(`/guides/bookings/${tripId}`),
+  login: (data: any) => api.post('/guides/login', data),
+  register: (data: any) => api.post('/guides/register', data),
+  getProfile: () => api.get('/guides/me'),
+  updateProfile: (data: any) => api.patch('/guides/me', data),
+  updateBookingStatus: (bookingId: string, status: string) => api.patch(`/guides/booking/${bookingId}/status`, { status }),
+};
+
+export const communityAPI = {
+  getPosts: (type?: string) => api.get('/community', { params: { type } }),
+  getPost: (id: string) => api.get(`/community/${id}`),
+  createPost: (data: any) => api.post('/community', data),
+  addComment: (postId: string, body: string) => api.post(`/community/${postId}/comments`, { body }),
+  likePost: (postId: string) => api.patch(`/community/${postId}/like`),
+  deletePost: (postId: string) => api.delete(`/community/${postId}`),
+};
+
+export const wishlistAPI = {
+  getWishlist: () => api.get('/wishlist'),
+  toggleCity: (cityId: string) => api.post(`/wishlist/city/${cityId}`),
+  toggleActivity: (activityId: string) => api.post(`/wishlist/activity/${activityId}`),
+  checkCity: (cityId: string) => api.get(`/wishlist/check/${cityId}`),
+  removeCity: (cityId: string) => api.delete(`/wishlist/${cityId}`),
+};
+
+export const buddyAPI = {
+  findMatches: (tripId: string) => api.get(`/buddy/match/${tripId}`),
+  getPreferences: () => api.get('/buddy/preferences'),
+  updatePreferences: (data: any) => api.patch('/buddy/preferences', data),
+};
+
+export const adminAPI = {
+  login: (data: any) => api.post('/admin/login', data),
+  getStats: (token: string) => api.get('/admin/stats', { headers: { Authorization: `Bearer ${token}` } }),
+  getUsers: (token: string) => api.get('/admin/users', { headers: { Authorization: `Bearer ${token}` } }),
+  getTrips: (token: string) => api.get('/admin/trips', { headers: { Authorization: `Bearer ${token}` } }),
+  getExpenses: (token: string) => api.get('/admin/expenses', { headers: { Authorization: `Bearer ${token}` } }),
+  getGuides: (token: string) => api.get('/admin/guides', { headers: { Authorization: `Bearer ${token}` } }),
+  deleteUser: (token: string, id: string) => api.delete(`/admin/users/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
 };
 
 export default api;

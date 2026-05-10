@@ -1,7 +1,6 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 const router = Router();
-const prisma = new PrismaClient();
 
 // GET / - Search/list cities
 router.get('/', async (req: any, res: any, next: any) => {
@@ -13,7 +12,19 @@ router.get('/', async (req: any, res: any, next: any) => {
     if (cost) where.costLevel = parseInt(String(cost));
     if (visa === 'false') where.visaRequired = false;
 
-    const cities = await prisma.city.findMany({ where, include: { activities: { take: 3 }, _count: { select: { activities: true } } } });
+    const cities = await prisma.city.findMany({ 
+      where, 
+      select: {
+        id: true, name: true, country: true, region: true, description: true,
+        costLevel: true, rating: true, climate: true, coverImage: true, safetyScore: true,
+        bestTimeToVisit: true, visaRequired: true, currency: true, population: true,
+        seasonalAlerts: true, highTrafficMonths: true,
+        _count: { select: { activities: true } },
+        activities: { take: 3, select: { id: true, name: true, category: true, cost: true, imageUrl: true, rating: true } }
+      },
+      take: 50
+    });
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
     res.json({ success: true, data: cities });
   } catch (error) { next(error); }
 });

@@ -1,7 +1,6 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 const router = Router();
-const prisma = new PrismaClient();
 
 // Helper to extract userId from JWT
 function getUserId(req: any): string | null {
@@ -23,8 +22,14 @@ router.get('/', async (req: any, res: any, next: any) => {
 
     const trips = await prisma.trip.findMany({
       where,
-      include: { companions: { include: { user: { select: { id: true, name: true, avatar: true } } } }, _count: { select: { expenses: true, notes: true } } },
-      orderBy: { startDate: 'desc' }
+      select: {
+        id: true, name: true, description: true, startDate: true, endDate: true,
+        coverPhoto: true, tripType: true, budget: true, currency: true, visibility: true,
+        tripMode: true, lookingForBuddy: true, createdAt: true,
+        _count: { select: { expenses: true, notes: true } }
+      },
+      orderBy: { startDate: 'desc' },
+      take: 100
     });
     res.json({ success: true, data: trips });
   } catch (error) { next(error); }
@@ -34,7 +39,7 @@ router.get('/', async (req: any, res: any, next: any) => {
 router.post('/', async (req: any, res: any, next: any) => {
   try {
     const userId = getUserId(req);
-    const { name, description, startDate, endDate, tripType, budget, currency, timezone, visibility, tags } = req.body;
+    const { name, description, startDate, endDate, tripType, budget, currency, timezone, visibility, tags, tripMode, lookingForBuddy } = req.body;
 
     const ownerId = userId || req.body.ownerId;
     if (!ownerId) return res.status(400).json({ success: false, message: 'Authentication required' });
@@ -46,6 +51,8 @@ router.post('/', async (req: any, res: any, next: any) => {
         tripType: tripType || 'Leisure', budget: parseFloat(budget || 0),
         currency: currency || 'USD', timezone: timezone || 'UTC',
         visibility: visibility || 'PRIVATE', tags: JSON.stringify(tags || []),
+        tripMode: tripMode || 'solo',
+        lookingForBuddy: lookingForBuddy || false,
         ownerId
       }
     });
@@ -73,7 +80,8 @@ router.get('/:id', async (req: any, res: any, next: any) => {
         expenses: { orderBy: { date: 'desc' } },
         packingLists: { include: { items: true } },
         notes: { orderBy: { createdAt: 'desc' } },
-        carbonEmissions: true
+        carbonEmissions: true,
+        guideBookings: { include: { guide: { select: { id: true, name: true, phone: true, avatar: true } } } }
       }
     });
     if (!trip) return res.status(404).json({ success: false, message: 'Trip not found' });
@@ -311,4 +319,65 @@ router.post('/:tripId/carbon', async (req: any, res: any, next: any) => {
   } catch (error) { next(error); }
 });
 
+// ── PHOTO/VIDEO ALBUM ──
+router.get('/:tripId/album', async (req: any, res: any, next: any) => {
+  try {
+    const photos = await prisma.tripAlbumPhoto.findMany({
+      where: { tripId: req.params.tripId },
+      orderBy: { timestamp: 'desc' }
+    });
+    const cover = photos.find((p: any) => p.isCover) || photos[0] || null;
+    res.json({ success: true, data: { photos, cover } });
+  } catch (error) { next(error); }
+});
+
+router.post('/:tripId/album', async (req: any, res: any, next: any) => {
+  try {
+    const { mediaUrl, mediaType, caption, timestamp, isCover } = req.body;
+    
+    // If setting as cover, unset any existing cover
+    if (isCover) {
+      await prisma.tripAlbumPhoto.updateMany({
+        where: { tripId: req.params.tripId, isCover: true },
+        data: { isCover: false }
+      });
+    }
+
+    const photo = await prisma.tripAlbumPhoto.create({
+      data: {
+        tripId: req.params.tripId,
+        mediaUrl,
+        mediaType: mediaType || 'photo',
+        caption,
+        timestamp: timestamp ? new Date(timestamp) : new Date(),
+        isCover: isCover || false
+      }
+    });
+    res.status(201).json({ success: true, data: photo });
+  } catch (error) { next(error); }
+});
+
+router.delete('/:tripId/album/:photoId', async (req: any, res: any, next: any) => {
+  try {
+    await prisma.tripAlbumPhoto.delete({ where: { id: req.params.photoId } });
+    res.json({ success: true, message: 'Photo deleted' });
+  } catch (error) { next(error); }
+});
+
+router.patch('/:tripId/album/:photoId/cover', async (req: any, res: any, next: any) => {
+  try {
+    // Unset all covers first
+    await prisma.tripAlbumPhoto.updateMany({
+      where: { tripId: req.params.tripId, isCover: true },
+      data: { isCover: false }
+    });
+    const photo = await prisma.tripAlbumPhoto.update({
+      where: { id: req.params.photoId },
+      data: { isCover: true }
+    });
+    res.json({ success: true, data: photo });
+  } catch (error) { next(error); }
+});
+
 export default router;
+
