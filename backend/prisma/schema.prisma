@@ -11,18 +11,23 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+// ── USER DOMAIN ──
 model User {
   id            String    @id @default(cuid())
   email         String?   @unique
   phone         String?   @unique
   name          String?
   avatar        String?
+  bio           String?
+  country       String?
+  travelStyle   String?
   role          String    @default("USER")
   
   // Auth providers
   googleId      String?   @unique
   appleId       String?   @unique
   facebookId    String?   @unique
+  passwordHash  String?
   
   // Magic link / OTP
   magicToken    String?   @unique
@@ -39,10 +44,26 @@ model User {
   trips         Trip[]
   companions    TripCompanion[]
   wishlisted    Wishlist[]
+  expenses      Expense[]
+  notes         Note[]
+  reviews       Review[]
+  followers     Follow[]  @relation("following")
+  following     Follow[]  @relation("follower")
 
   @@index([email, phone])
 }
 
+model Follow {
+  id          String @id @default(cuid())
+  followerId  String
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followingId String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+  @@unique([followerId, followingId])
+}
+
+// ── TRIP DOMAIN ──
 model Trip {
   id          String   @id @default(cuid())
   name        String
@@ -55,12 +76,18 @@ model Trip {
   currency    String   @default("USD")
   timezone    String   @default("UTC")
   visibility  String   @default("PRIVATE")
-  tags        String   // Stored as JSON string
+  tags        String   @default("[]")
   
   ownerId     String
   owner       User     @relation(fields: [ownerId], references: [id])
   
-  companions  TripCompanion[]
+  companions    TripCompanion[]
+  itinerary     ItineraryStop[]
+  expenses      Expense[]
+  budgetCats    BudgetCategory[]
+  packingLists  PackingList[]
+  notes         Note[]
+  carbonEmissions CarbonEmission[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -69,52 +96,59 @@ model Trip {
 model TripCompanion {
   id        String   @id @default(cuid())
   tripId    String
-  trip      Trip     @relation(fields: [tripId], references: [id])
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  role      String   @default("VIEWER") // ADMIN, EDITOR, VIEWER
+  role      String   @default("VIEWER")
   
   @@unique([tripId, userId])
 }
 
+// ── CITY DOMAIN ──
 model City {
   id              String   @id @default(cuid())
   name            String
   country         String
   region          String
   description     String
+  latitude        Float?
+  longitude       Float?
   population      Int
   currency        String
-  costLevel       Int      // 1-5 scale
+  costLevel       Int
   rating          Float
   climate         String
   visaRequired    Boolean  @default(true)
-  safetyScore     Int      // 0-100
+  safetyScore     Int
   bestTimeToVisit String
   coverImage      String
   
   activities      Activity[]
+  stops           ItineraryStop[]
+  safetyAlerts    SafetyAlert[]
   
   createdAt       DateTime @default(now())
 }
 
+// ── ACTIVITY DOMAIN ──
 model Activity {
   id            String   @id @default(cuid())
   cityId        String
   city          City     @relation(fields: [cityId], references: [id])
   name          String
   description   String
-  category      String   // Cultural, Adventure, Luxury, etc.
+  category      String
   cost          Float
-  duration      Int      // Minutes
+  duration      Int
   rating        Float
   reviewsCount  Int      @default(0)
   accessibility Boolean  @default(false)
-  timeOfDay     String   // Morning, Afternoon, Evening, Anytime
-  weatherIdeal  String   // Sunny, Indoor, Any
+  timeOfDay     String
+  weatherIdeal  String
   imageUrl      String
   
   wishlists     Wishlist[]
+  itineraryActs ItineraryActivity[]
 }
 
 model Wishlist {
@@ -123,6 +157,140 @@ model Wishlist {
   user       User     @relation(fields: [userId], references: [id])
   activityId String
   activity   Activity @relation(fields: [activityId], references: [id])
+  priceAlert Boolean  @default(false)
+  createdAt  DateTime @default(now())
   
   @@unique([userId, activityId])
+}
+
+// ── ITINERARY DOMAIN ──
+model ItineraryStop {
+  id         String   @id @default(cuid())
+  tripId     String
+  trip       Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  cityId     String
+  city       City     @relation(fields: [cityId], references: [id])
+  order      Int
+  daysCount  Int      @default(1)
+  notes      String?
+  
+  activities ItineraryActivity[]
+  
+  createdAt  DateTime @default(now())
+}
+
+model ItineraryActivity {
+  id         String   @id @default(cuid())
+  stopId     String
+  stop       ItineraryStop @relation(fields: [stopId], references: [id], onDelete: Cascade)
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id])
+  day        Int      @default(1)
+  timeStart  String?
+  timeEnd    String?
+  notes      String?
+  
+  createdAt  DateTime @default(now())
+}
+
+// ── BUDGET DOMAIN ──
+model BudgetCategory {
+  id        String @id @default(cuid())
+  tripId    String
+  trip      Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  label     String
+  allocated Float  @default(0)
+  spent     Float  @default(0)
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Float
+  currency  String   @default("USD")
+  category  String
+  description String?
+  date      DateTime @default(now())
+  receiptUrl String?
+  
+  createdAt DateTime @default(now())
+}
+
+// ── PACKING DOMAIN ──
+model PackingList {
+  id         String   @id @default(cuid())
+  tripId     String
+  trip       Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  name       String
+  
+  items      PackingItem[]
+  createdAt  DateTime @default(now())
+}
+
+model PackingItem {
+  id       String  @id @default(cuid())
+  listId   String
+  list     PackingList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  name     String
+  category String
+  isPacked Boolean @default(false)
+  quantity Int     @default(1)
+}
+
+// ── JOURNAL DOMAIN ──
+model Note {
+  id        String   @id @default(cuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  day       Int?
+  title     String?
+  body      String
+  mood      String?
+  energy    Int?
+  imageUrl  String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ── SAFETY DOMAIN ──
+model SafetyAlert {
+  id        String   @id @default(cuid())
+  cityId    String
+  city      City     @relation(fields: [cityId], references: [id])
+  type      String
+  body      String
+  severity  String
+  validUntil DateTime?
+  
+  createdAt DateTime @default(now())
+}
+
+// ── CARBON DOMAIN ──
+model CarbonEmission {
+  id      String @id @default(cuid())
+  tripId  String
+  trip    Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  mode    String
+  kgCo2   Float
+  
+  createdAt DateTime @default(now())
+}
+
+// ── COMMUNITY DOMAIN ──
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  targetId  String
+  targetType String
+  rating    Float
+  body      String
+  
+  createdAt DateTime @default(now())
 }
