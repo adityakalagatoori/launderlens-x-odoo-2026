@@ -2,23 +2,24 @@ import { LoginCard } from "@/components/auth/LoginCard";
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4">
-      {/* Background Decorative Elements */}
-      <div className="fixed top-[10%] left-[5%] w-64 h-64 bg-[#63D5DF] opacity-20 blur-3xl rounded-full" />
-      <div className="fixed bottom-[10%] right-[5%] w-96 h-96 bg-[#F3E2D2] opacity-30 blur-3xl rounded-full" />
-      
-      <div className="z-10 w-full flex flex-col items-center">
-        <div className="mb-12 flex items-center gap-2">
-          <div className="w-10 h-10 bg-[#1A1A1A] rounded-xl flex items-center justify-center">
-            <span className="text-[#63D5DF] font-bold text-xl">T</span>
+    <main className="flex min-h-screen flex-col items-center justify-center p-6 relative z-10">
+      <div className="w-full max-w-md flex flex-col items-center animate-fade-in-up">
+        {/* Brand Logo */}
+        <div className="mb-10 flex flex-col items-center gap-3">
+          <div className="w-14 h-14 bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-lg border border-white/50 relative overflow-hidden group cursor-pointer transition-transform hover:scale-105">
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/40 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            <span className="text-[#1A1A1A] font-bold text-3xl font-outfit drop-shadow-sm">T</span>
           </div>
-          <span className="text-2xl font-outfit font-bold tracking-tight">TRAVELOOP</span>
+          <span className="text-3xl font-outfit font-bold tracking-tight text-[#1A1A1A] drop-shadow-sm">TRAVELOOP</span>
+          <p className="text-[#1A1A1A]/70 font-medium text-sm tracking-wide uppercase">Luxury Reimagined</p>
         </div>
         
+        {/* Auth Card */}
         <LoginCard />
         
-        <footer className="mt-12 text-sm text-gray-600 font-medium">
-          &copy; 2026 Traveloop Global. All rights reserved.
+        {/* Footer */}
+        <footer className="mt-10 text-sm text-[#1A1A1A]/60 font-medium tracking-wide">
+          &copy; {new Date().getFullYear()} Traveloop Global. All rights reserved.
         </footer>
       </div>
     </main>
