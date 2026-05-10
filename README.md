@@ -1,11 +1,11 @@
 **# launderlens-x-odoo-2026
 "LaunderLens — Washing away problems, one solution at a time. The lens sees what others miss. Built for Odoo x KAHE Hackathon '26."**
 
-**TEAM MEMBERS :-**
-KALAGATOORI VAISHNAV ADITYA | Backend & Database
-SRUSHTI DAKSHINAMOORTHY | Research, Planning & Documentation
-BALACHANDAR A | Developer
-SHYAAM GANESH M.R | UI/UX & Frontend
+**TEAM MEMBERS :-**   
+KALAGATOORI VAISHNAV ADITYA | Backend & Database  
+SRUSHTI DAKSHINAMOORTHY | Research, Planning & Documentation  
+BALACHANDAR A | Developer  
+SHYAAM GANESH M.R | UI/UX & Frontend  
 
 
 **Problem Statement :-**
@@ -23,13 +23,13 @@ The application must demonstrate proper use of relational databases to store and
 
 TRAVELOOP
 
-Main pages:
-[built for tourist side]
-	1. Login, Registration & main page
-	2. Create new trip, build itenary, search by activity, budget section, packing & trip notes.
-	3. user trip listing & user profile
-	4. Community review & connect page
-    5. Admin panel 
+Main pages:  
+[built for tourist side]  
+	1. Login, Registration & main page  
+	2. Create new trip, build itenary, search by activity, budget section, packing & trip notes.  
+	3. user trip listing & user profile  
+	4. Community review & connect page  
+    5. Admin panel  
 
 
 Tech Stack :-
