@@ -185,7 +185,10 @@ User: admin@traveloop.com
 Pass: admin@2026
 Guide Portal: http://localhost:3000/guide/login
 
-Screenshots :-
+
+SCREENSHOTS :-
+
+
 LOGIN PAGE :-
 
 <img width="1916" height="940" alt="image" src="https://github.com/user-attachments/assets/5d1fdf8a-cb38-4a7f-a54d-e53d279f5cb2" />
