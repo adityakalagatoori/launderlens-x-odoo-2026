@@ -13,7 +13,7 @@
 @layer base {
   body {
     @apply bg-[#F5F6F7] text-[#1A1A1A] antialiased;
-    background: linear-gradient(135deg, #63D5DF 0%, #AEE7EC 40%, #F3E2D2 100%);
+    background: linear-gradient(180deg, #63D5DF 0%, #AEE7EC 28%, #F5F6F7 58%, #F3E2D2 100%);
     min-height: 100vh;
   }
 }
