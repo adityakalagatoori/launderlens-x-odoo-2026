@@ -157,15 +157,169 @@ Runs on port 5000	Runs on port 3000
 Open browser → http://localhost:3000 
 
 Screenshots :-
-login page :-
+LOGIN PAGE :-
+
 <img width="1916" height="940" alt="image" src="https://github.com/user-attachments/assets/5d1fdf8a-cb38-4a7f-a54d-e53d279f5cb2" />
-user dashboard page :-
+
+CONFORMATION LINK FOR NEW USERS :-
+
+<img width="1914" height="984" alt="image" src="https://github.com/user-attachments/assets/172b01f3-f97c-4e79-8118-c26ba74d84cc" />
+
+USER DASHBOARD PAGE :-
+
 <img width="1919" height="943" alt="image" src="https://github.com/user-attachments/assets/93a0d105-9fa4-4801-8e5a-2ecaa80d4886" />
-home page :-
+
+USER HOME PAGE :-
+
 <img width="1918" height="990" alt="image" src="https://github.com/user-attachments/assets/76741d4e-914d-4a1e-ab6f-9e0e642b3894" />
-new trip :-
+
+NEW TRIP :-
+
 <img width="1917" height="989" alt="image" src="https://github.com/user-attachments/assets/c3ff8241-212c-49b8-917c-6d05e08b53ce" />
+
 <img width="1916" height="994" alt="image" src="https://github.com/user-attachments/assets/12b2263f-3f5a-4dcc-a316-bbed81f54dae" />
+
+<img width="1910" height="942" alt="image" src="https://github.com/user-attachments/assets/02c50edf-18a6-4080-98bb-8ac5d6c14ed6" />
+
+<img width="1913" height="945" alt="image" src="https://github.com/user-attachments/assets/c372620e-2119-4362-bfec-d9ae0e2ee884" />
+
+<img width="1919" height="942" alt="image" src="https://github.com/user-attachments/assets/1e22b1f4-b0ea-418e-bda2-02089d985543" />
+
+<img width="1916" height="945" alt="image" src="https://github.com/user-attachments/assets/caf08d7a-603a-4301-8325-854c0874bc61" />
+
+TRIP DASHBOARD :-
+
+<img width="1914" height="947" alt="image" src="https://github.com/user-attachments/assets/6c4ce9b3-8e3e-423d-ad14-31bfe4ffdd8a" />
+
+TRIP ITINERARY :-
+
+<img width="1912" height="939" alt="image" src="https://github.com/user-attachments/assets/1e60e931-57ad-482f-bb7e-30aaed49bae1" />
+
+TRIP ROADMAP :-
+
+<img width="1910" height="944" alt="image" src="https://github.com/user-attachments/assets/fcd965ec-fe45-43a7-bcb1-f16236259628" />
+
+TRIP EXPENSES INVOINCE :-
+
+<img width="1915" height="946" alt="image" src="https://github.com/user-attachments/assets/bf1996df-0c32-42c6-b9fb-0899adb67ffc" />
+
+GUIDE REGISTRATION PAGE :-
+
+<img width="1907" height="992" alt="image" src="https://github.com/user-attachments/assets/9cf96c74-d1e6-437d-800d-469c7add9cb6" />
+
+GUIDE DASHBOARD [BEFORE BOOKINGS] :-
+
+<img width="1915" height="990" alt="image" src="https://github.com/user-attachments/assets/4f1b7e1b-a70b-4e81-9984-56024240a6c0" />
+
+UPDATED TRIP DASHBOARD FOR BOOKINGS :-
+
+<img width="1916" height="939" alt="image" src="https://github.com/user-attachments/assets/8da280ea-8671-4dc6-a89e-15f96e8236c8" />
+
+<img width="1917" height="942" alt="image" src="https://github.com/user-attachments/assets/b40d769f-78a2-4618-b938-748b976c1d4e" />
+
+<img width="1917" height="947" alt="image" src="https://github.com/user-attachments/assets/0511ba02-72a6-464e-a725-e1cfed1a9be9" />
+
+GUIDE LOGIN PAGE :-
+
+<img width="1915" height="936" alt="image" src="https://github.com/user-attachments/assets/781e08c2-afd5-48d2-b410-5b473cb3ddce" />
+
+UPDATED GUIDE DASHBOARD :-
+
+<img width="1916" height="944" alt="image" src="https://github.com/user-attachments/assets/d737bf3a-502a-4109-ae3f-9eadff130eee" />
+
+GUIDE ACCEPTANCE PAGE :-
+
+<img width="1918" height="991" alt="image" src="https://github.com/user-attachments/assets/9e63d67b-6a34-4508-8513-62b708aba416" />
+
+CONFORMATION GUIDE DASHBOARD :-
+
+<img width="1915" height="985" alt="image" src="https://github.com/user-attachments/assets/45046881-ad29-4673-b138-3e70e97ccd77" />
+
+EDITABLE GUIDE SPECS :-
+
+<img width="1918" height="990" alt="image" src="https://github.com/user-attachments/assets/32bb0713-47fd-4099-8cdc-b068a71df0c3" />
+
+NON-STATIC SEARCH BAR :-
+
+<img width="1916" height="991" alt="image" src="https://github.com/user-attachments/assets/12a70d44-36c7-4937-a4a2-be082792d6eb" />
+
+CITY DISCOVERY :-
+
+<img width="1915" height="988" alt="image" src="https://github.com/user-attachments/assets/c20a3a76-660e-46be-b76a-6653c2fa4a62" />
+
+WORKIG FILTERS :-  
+
+<img width="1908" height="982" alt="image" src="https://github.com/user-attachments/assets/f7872465-c45c-4150-bbe4-66da61797e51" />   
+
+REAL-TIME DESTINATION COMPARISION FOR THE USERS :-
+
+<img width="1914" height="989" alt="image" src="https://github.com/user-attachments/assets/6f2676ae-7cd2-4ba1-90fb-0e3343469813" />
+
+DYNAMIC-REAL-TIME CARDS FOR EACH CITY AND THIER POPULAR EXPERIENCES :- [WISHLIST OPTIONS INCLUDED]
+
+<img width="1916" height="989" alt="image" src="https://github.com/user-attachments/assets/39ea78eb-9aec-4c79-8e10-76fac919cf2e" />
+
+<img width="1918" height="989" alt="image" src="https://github.com/user-attachments/assets/a79099d3-d2ee-4c70-8599-0738a8ce8df6" />
+
+COMUNITY TAB FOR ALL USERS :-
+
+<img width="1916" height="989" alt="image" src="https://github.com/user-attachments/assets/679605d1-50af-4cc2-a026-1024ce19bad9" />
+
+HOW TO PUBLISH UR OWN STORIES :-
+
+<img width="1910" height="987" alt="image" src="https://github.com/user-attachments/assets/77cbb18d-fbd3-4911-8955-03f2d15ff2ea" />
+
+WISHLISTS UPDATING IN REAL-TIME :-
+
+<img width="1914" height="981" alt="image" src="https://github.com/user-attachments/assets/9acd3217-2aa0-4d8d-b769-7d93defe996b" />
+
+REAL-TIME AI SUGGESTED AND DYNAMIC PACKING TOOL FOR USERS :-
+
+<img width="1916" height="977" alt="image" src="https://github.com/user-attachments/assets/ce2593a8-006d-40e4-bf1f-0b00ee4408e7" />
+
+ADMIN PORTAL LOGIN PAGE :- [admin@2026] , WITH REFRESH BUTTON
+
+<img width="1911" height="987" alt="image" src="https://github.com/user-attachments/assets/209be730-6d6c-4426-ada8-17e24534f5e2" />
+
+REAL-TIME ADMIN PORTAL :-
+
+<img width="1917" height="991" alt="image" src="https://github.com/user-attachments/assets/34ee79cd-f3e0-4b5d-a470-419fd5aaec78" />
+
+<img width="1919" height="972" alt="image" src="https://github.com/user-attachments/assets/82b4caeb-de09-4322-bd16-75a406510c9b" />
+
+<img width="1911" height="987" alt="image" src="https://github.com/user-attachments/assets/70551cee-ad0f-4733-b8a1-63b824a29ea2" />
+
+<img width="1914" height="860" alt="image" src="https://github.com/user-attachments/assets/73e4f14b-4853-4d1b-aae2-5fab09b28ee8" />
+
+<img width="1916" height="986" alt="image" src="https://github.com/user-attachments/assets/417b7781-e337-4b55-a9b6-553e59137b5c" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
