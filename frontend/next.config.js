@@ -1,9 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
-    domains: ['images.unsplash.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+    ],
+  },
+  // Disable webpack cache to prevent 32-bit memory crashes
+  webpack: (config) => {
+    config.cache = false;
+    return config;
   },
 }
 
