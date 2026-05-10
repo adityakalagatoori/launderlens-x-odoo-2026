@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Compass, Map, Wallet, Bell, Settings, Search, Plus, Calendar, MapPin, Plane, ArrowRight, LogOut, BookOpen, Package } from 'lucide-react';
+import { Home, Compass, Map, Search, Plus, Calendar, Plane, ArrowRight, LogOut, Package, ShieldCheck, Trash2 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { tripsAPI, citiesAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
@@ -13,21 +13,41 @@ export default function Dashboard() {
   const [trips, setTrips] = useState<any[]>([]);
   const [cities, setCities] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [searchQ, setSearchQ] = useState('');
 
   useEffect(() => { setMounted(true); }, []);
+
+  const loadTrips = () => {
+    tripsAPI.getTrips().then(r => setTrips(r.data.data)).catch(() => {});
+  };
 
   useEffect(() => {
     if (!mounted) return;
     if (!isAuthenticated) { router.push('/login'); return; }
-    tripsAPI.getTrips().then(r => setTrips(r.data.data)).catch(() => {});
-    citiesAPI.search().then(r => setCities(r.data.data?.slice(0, 3))).catch(() => {});
+    loadTrips();
+    citiesAPI.search().then(r => setCities(r.data.data)).catch(() => {});
   }, [mounted, isAuthenticated]);
 
   if (!mounted) return null;
   if (!isAuthenticated) return null;
 
-  const nextTrip = trips[0];
+  const deleteTrip = async (id: string) => {
+    if (!confirm('Delete this trip and all its data?')) return;
+    await tripsAPI.deleteTrip(id);
+    loadTrips();
+  };
+
   const totalBudget = trips.reduce((s: number, t: any) => s + (t.budget || 0), 0);
+  const nextTrip = trips.find((t: any) => new Date(t.startDate) > new Date()) || trips[0];
+
+  // Search filter for trips and cities
+  const filteredTrips = trips.filter((t: any) => !searchQ || t.name.toLowerCase().includes(searchQ.toLowerCase()));
+  const filteredCities = cities.filter((c: any) => !searchQ || c.name.toLowerCase().includes(searchQ.toLowerCase()) || c.country.toLowerCase().includes(searchQ.toLowerCase()));
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQ) router.push(`/cities`);
+  };
 
   return (
     <div className="min-h-screen flex text-[#1A1A1A] relative z-10 overflow-hidden pt-6 px-6 pb-6 gap-6">
@@ -38,21 +58,22 @@ export default function Dashboard() {
         </Link>
         <nav className="flex-1 flex flex-col gap-4 w-full px-4">
           {[
-            { icon: <Home size={22} />, href: '/', active: true },
-            { icon: <Map size={22} />, href: '/cities', active: false },
-            { icon: <Compass size={22} />, href: '/activities', active: false },
-            { icon: <Package size={22} />, href: '/trips/new', active: false },
+            { icon: <Home size={22} />, href: '/', active: true, label: 'Home' },
+            { icon: <Map size={22} />, href: '/cities', active: false, label: 'Cities' },
+            { icon: <Compass size={22} />, href: '/activities', active: false, label: 'Explore' },
+            { icon: <Package size={22} />, href: '/trips/new', active: false, label: 'New Trip' },
+            { icon: <ShieldCheck size={22} />, href: '/admin', active: false, label: 'Admin' },
           ].map((item, i) => (
-            <Link key={i} href={item.href} className={`w-full aspect-square rounded-2xl flex items-center justify-center transition-all ${item.active ? 'bg-white shadow-md text-[#63D5DF]' : 'text-[#1A1A1A]/50 hover:bg-white/40'}`}>
+            <Link key={i} href={item.href} title={item.label} className={`w-full aspect-square rounded-2xl flex items-center justify-center transition-all ${item.active ? 'bg-white shadow-md text-[#63D5DF]' : 'text-[#1A1A1A]/50 hover:bg-white/40'}`}>
               {item.icon}
             </Link>
           ))}
         </nav>
         <div className="w-full px-4 space-y-4">
-          <Link href="/profile" className="w-full aspect-square rounded-2xl flex items-center justify-center text-[#1A1A1A]/50 hover:bg-white/40 transition-colors">
-            <Settings size={22} />
+          <Link href="/profile" title="Profile" className="w-full aspect-square rounded-2xl flex items-center justify-center text-[#1A1A1A]/50 hover:bg-white/40 transition-colors">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#63D5DF] to-[#F3E2D2] flex items-center justify-center text-white text-xs font-bold">{user?.name?.charAt(0) || 'T'}</div>
           </Link>
-          <button onClick={() => { logout(); router.push('/login'); }} className="w-full aspect-square rounded-2xl flex items-center justify-center text-red-400 hover:bg-red-50/50 transition-colors">
+          <button onClick={() => { logout(); router.push('/login'); }} title="Logout" className="w-full aspect-square rounded-2xl flex items-center justify-center text-red-400 hover:bg-red-50/50 transition-colors">
             <LogOut size={22} />
           </button>
         </div>
@@ -61,10 +82,11 @@ export default function Dashboard() {
       <main className="flex-1 flex flex-col gap-6">
         {/* Header */}
         <header className="glass-panel h-20 rounded-[2rem] px-8 flex items-center justify-between">
-          <div className="relative w-96 group">
+          <form onSubmit={handleSearch} className="relative w-96 group">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1A1A1A]/40 group-focus-within:text-[#63D5DF] transition-colors" />
-            <input type="text" placeholder="Search destinations, itineraries..." className="w-full bg-white/40 border border-white/50 rounded-xl py-2.5 pl-12 pr-4 outline-none focus:bg-white/60 focus:ring-2 focus:ring-white/20 transition-all font-medium placeholder:text-[#1A1A1A]/40 text-sm" />
-          </div>
+            <input type="text" placeholder="Search your trips & destinations..." value={searchQ} onChange={e => setSearchQ(e.target.value)}
+              className="w-full bg-white/40 border border-white/50 rounded-xl py-2.5 pl-12 pr-4 outline-none focus:bg-white/60 focus:ring-2 focus:ring-white/20 transition-all font-medium placeholder:text-[#1A1A1A]/40 text-sm" />
+          </form>
           <div className="flex items-center gap-6">
             <Link href="/trips/new" className="flex items-center gap-2 bg-gradient-to-r from-[#63D5DF] to-[#52C4CE] text-white font-semibold py-2.5 px-5 rounded-xl shadow-lg hover:-translate-y-0.5 transition-all text-sm">
               <Plus size={16} /> New Trip
@@ -73,7 +95,7 @@ export default function Dashboard() {
             <Link href="/profile" className="flex items-center gap-3">
               <div className="text-right hidden md:block">
                 <p className="text-sm font-bold leading-tight">{user?.name || 'Traveler'}</p>
-                <p className="text-xs text-[#1A1A1A]/60 font-medium">{user?.email || 'Premium Member'}</p>
+                <p className="text-xs text-[#1A1A1A]/60 font-medium">{user?.email || ''}</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#63D5DF] to-[#F3E2D2] border-2 border-white shadow-sm flex items-center justify-center text-white font-bold text-sm">
                 {user?.name?.charAt(0) || 'T'}
@@ -82,7 +104,7 @@ export default function Dashboard() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 flex flex-col gap-6">
+        <div className="flex-1 overflow-y-auto pr-2 flex flex-col gap-6">
           {/* Hero */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="col-span-2 glass-panel p-8 rounded-[2.5rem] relative overflow-hidden">
@@ -105,7 +127,7 @@ export default function Dashboard() {
                   <ArrowRight size={18} className="text-[#63D5DF]" />
                 </Link>
               ) : (
-                <Link href="/trips/new" className="premium-button w-max">Plan Your First Trip <ArrowRight size={18} /></Link>
+                <Link href="/trips/new" className="premium-button w-max flex items-center gap-2">Plan Your First Trip <ArrowRight size={18} /></Link>
               )}
             </motion.div>
 
@@ -125,21 +147,27 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="glass-panel p-8 rounded-[2.5rem]">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold font-outfit">Your Trips</h3>
+                <h3 className="text-xl font-bold font-outfit">Your Trips ({filteredTrips.length})</h3>
                 <Link href="/trips/new" className="text-sm font-bold text-[#63D5DF] hover:text-[#52C4CE]">+ New Trip</Link>
               </div>
-              {trips.length === 0 ? (
-                <p className="text-[#1A1A1A]/50 text-center py-8 font-medium">No trips yet. Create your first one!</p>
+              {filteredTrips.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-[#1A1A1A]/50 font-medium mb-4">No trips yet. Create your first one!</p>
+                  <Link href="/trips/new" className="premium-button w-auto inline-flex px-6">Create Trip</Link>
+                </div>
               ) : (
-                <div className="space-y-4">
-                  {trips.slice(0, 4).map((trip: any) => (
-                    <Link key={trip.id} href={`/trips/${trip.id}`} className="bg-white/40 border border-white/50 p-4 rounded-2xl flex justify-between items-center hover:bg-white/60 transition-colors block">
-                      <div>
-                        <h4 className="font-bold text-[#1A1A1A]">{trip.name}</h4>
-                        <p className="text-xs font-medium text-[#1A1A1A]/60 mt-1">{trip.tripType} • ${trip.budget}</p>
+                <div className="space-y-3">
+                  {filteredTrips.map((trip: any) => (
+                    <div key={trip.id} className="bg-white/40 border border-white/50 p-4 rounded-2xl flex justify-between items-center hover:bg-white/60 transition-colors">
+                      <Link href={`/trips/${trip.id}`} className="flex-1">
+                        <h4 className="font-bold text-[#1A1A1A] hover:text-[#63D5DF] transition-colors">{trip.name}</h4>
+                        <p className="text-xs font-medium text-[#1A1A1A]/60 mt-1">{trip.tripType} · ${trip.budget} · {new Date(trip.startDate).toLocaleDateString()}</p>
+                      </Link>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => deleteTrip(trip.id)} className="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50/50 transition-all" title="Delete trip"><Trash2 size={14} /></button>
+                        <Link href={`/trips/${trip.id}`}><ArrowRight size={16} className="text-[#1A1A1A]/40" /></Link>
                       </div>
-                      <ArrowRight size={16} className="text-[#1A1A1A]/40" />
-                    </Link>
+                    </div>
                   ))}
                 </div>
               )}
@@ -147,17 +175,17 @@ export default function Dashboard() {
 
             <div className="glass-panel p-8 rounded-[2.5rem]">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold font-outfit">Featured Destinations</h3>
-                <Link href="/cities" className="text-sm font-bold text-[#63D5DF] hover:text-[#52C4CE]">View All</Link>
+                <h3 className="text-xl font-bold font-outfit">Destinations</h3>
+                <Link href="/cities" className="text-sm font-bold text-[#63D5DF] hover:text-[#52C4CE]">View All →</Link>
               </div>
-              <div className="space-y-4">
-                {cities.map((city: any) => (
-                  <Link key={city.id} href={`/cities`} className="bg-white/40 border border-white/50 p-4 rounded-2xl flex justify-between items-center hover:bg-white/60 transition-colors block">
+              <div className="space-y-3">
+                {filteredCities.slice(0, 5).map((city: any) => (
+                  <Link key={city.id} href="/cities" className="bg-white/40 border border-white/50 p-4 rounded-2xl flex justify-between items-center hover:bg-white/60 transition-colors block">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-cover bg-center" style={{ backgroundImage: `url(${city.coverImage})` }} />
+                      <div className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0" style={{ backgroundImage: `url(${city.coverImage})` }} />
                       <div>
                         <h4 className="font-bold">{city.name}</h4>
-                        <p className="text-xs text-[#1A1A1A]/60">{city.country} • ★ {city.rating}</p>
+                        <p className="text-xs text-[#1A1A1A]/60">{city.country} · ★ {city.rating}</p>
                       </div>
                     </div>
                     <span className="text-xs font-bold text-[#63D5DF]">{city._count?.activities || 0} activities</span>
