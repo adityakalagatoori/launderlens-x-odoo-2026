@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth.routes';
+// Removed duplicate import
 import { errorHandler } from './middleware/error.middleware';
 import { rateLimiter } from './middleware/rate-limiter.middleware';
 
@@ -30,7 +30,15 @@ app.use(morgan('dev'));
 app.use(rateLimiter);
 
 // Routes
+import authRoutes from './routes/auth.routes';
+import cityRoutes from './routes/city.routes';
+import activityRoutes from './routes/activity.routes';
+import tripRoutes from './routes/trip.routes';
+
 app.use('/api/auth', authRoutes);
+app.use('/api/cities', cityRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/trips', tripRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {

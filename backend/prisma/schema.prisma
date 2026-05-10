@@ -2,12 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -16,7 +17,7 @@ model User {
   phone         String?   @unique
   name          String?
   avatar        String?
-  role          Role      @default(USER)
+  role          String    @default("USER")
   
   // Auth providers
   googleId      String?   @unique
@@ -35,11 +36,93 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  trips         Trip[]
+  companions    TripCompanion[]
+  wishlisted    Wishlist[]
+
   @@index([email, phone])
 }
 
-enum Role {
-  USER
-  ADMIN
-  PARTNER
+model Trip {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  coverPhoto  String?
+  tripType    String
+  budget      Float    @default(0)
+  currency    String   @default("USD")
+  timezone    String   @default("UTC")
+  visibility  String   @default("PRIVATE")
+  tags        String   // Stored as JSON string
+  
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  
+  companions  TripCompanion[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TripCompanion {
+  id        String   @id @default(cuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  role      String   @default("VIEWER") // ADMIN, EDITOR, VIEWER
+  
+  @@unique([tripId, userId])
+}
+
+model City {
+  id              String   @id @default(cuid())
+  name            String
+  country         String
+  region          String
+  description     String
+  population      Int
+  currency        String
+  costLevel       Int      // 1-5 scale
+  rating          Float
+  climate         String
+  visaRequired    Boolean  @default(true)
+  safetyScore     Int      // 0-100
+  bestTimeToVisit String
+  coverImage      String
+  
+  activities      Activity[]
+  
+  createdAt       DateTime @default(now())
+}
+
+model Activity {
+  id            String   @id @default(cuid())
+  cityId        String
+  city          City     @relation(fields: [cityId], references: [id])
+  name          String
+  description   String
+  category      String   // Cultural, Adventure, Luxury, etc.
+  cost          Float
+  duration      Int      // Minutes
+  rating        Float
+  reviewsCount  Int      @default(0)
+  accessibility Boolean  @default(false)
+  timeOfDay     String   // Morning, Afternoon, Evening, Anytime
+  weatherIdeal  String   // Sunny, Indoor, Any
+  imageUrl      String
+  
+  wishlists     Wishlist[]
+}
+
+model Wishlist {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id])
+  
+  @@unique([userId, activityId])
 }
